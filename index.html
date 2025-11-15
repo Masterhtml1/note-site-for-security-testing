@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NoteShare - HACKABLE VERSION</title>
+    <title>NoteShare - Simple Note Sharing</title>
     <style>
         * {
             margin: 0;
@@ -40,16 +40,6 @@
             color: #666;
             margin-bottom: 30px;
             font-size: 14px;
-        }
-
-        .warning {
-            background: #ff5252;
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-weight: bold;
-            text-align: center;
         }
 
         .form-group {
@@ -141,6 +131,9 @@
         .note-preview {
             color: #666;
             font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .note-actions {
@@ -218,48 +211,18 @@
             width: auto;
             margin-top: 10px;
         }
-
-        .hack-panel {
-            background: #1a1a1a;
-            color: #00ff00;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-            font-family: monospace;
-            font-size: 14px;
-        }
-
-        .hack-btn {
-            background: #ff5252;
-            margin-top: 10px;
-        }
-
-        .admin-badge {
-            background: gold;
-            color: black;
-            padding: 3px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-left: 10px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="warning">
-            ⚠️ INTENTIONALLY VULNERABLE VERSION - FOR TESTING ONLY ⚠️
-        </div>
-
         <!-- Login/Signup Screen -->
         <div id="authScreen">
             <h1>📝 NoteShare</h1>
-            <p class="subtitle">Hackable version - Find all the vulnerabilities!</p>
+            <p class="subtitle">Create and share notes instantly</p>
 
             <div class="tabs">
                 <button class="tab active" onclick="showTab('login')">Login</button>
                 <button class="tab" onclick="showTab('signup')">Sign Up</button>
-                <button class="tab" onclick="showTab('hack')">🔓 Hacks</button>
             </div>
 
             <!-- Login Form -->
@@ -274,11 +237,6 @@
                 </div>
                 <button onclick="login()">Login</button>
                 <div id="loginError" class="error"></div>
-                
-                <!-- VULNERABILITY: SQL Injection-style bypass hint -->
-                <p style="font-size: 12px; color: #999; margin-top: 10px;">
-                    Hint: Try special characters... 🤔
-                </p>
             </div>
 
             <!-- Signup Form -->
@@ -298,42 +256,6 @@
                 <button onclick="signup()">Create Account</button>
                 <div id="signupError" class="error"></div>
             </div>
-
-            <!-- Hack Panel -->
-            <div id="hackForm" class="hidden">
-                <div class="hack-panel">
-                    <h3>🔓 HACK MENU</h3>
-                    <p style="margin: 10px 0;">Quick exploits to try:</p>
-                    
-                    <button class="hack-btn" onclick="hackBypassLogin()">
-                        💀 Bypass Login (No Password)
-                    </button>
-                    
-                    <button class="hack-btn" onclick="hackGrantAdmin()">
-                        👑 Grant Admin Access
-                    </button>
-                    
-                    <button class="hack-btn" onclick="hackViewAllNotes()">
-                        👁️ View EVERYONE's Notes
-                    </button>
-                    
-                    <button class="hack-btn" onclick="hackDeleteAllData()">
-                        🗑️ Delete All Users & Notes
-                    </button>
-                    
-                    <button class="hack-btn" onclick="hackStealPasswords()">
-                        🔑 Steal All Passwords
-                    </button>
-                    
-                    <button class="hack-btn" onclick="hackInjectXSS()">
-                        💉 Test XSS Injection
-                    </button>
-                    
-                    <button class="hack-btn" onclick="showHackTips()">
-                        💡 Show More Exploits
-                    </button>
-                </div>
-            </div>
         </div>
 
         <!-- Main App Screen -->
@@ -341,10 +263,7 @@
             <div class="header">
                 <div>
                     <h1>📝 My Notes</h1>
-                    <div class="user-info">
-                        Logged in as <strong id="currentUser"></strong>
-                        <span id="adminBadge" class="admin-badge hidden">ADMIN</span>
-                    </div>
+                    <div class="user-info">Logged in as <strong id="currentUser"></strong></div>
                 </div>
                 <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
@@ -352,7 +271,6 @@
             <div class="tabs">
                 <button class="tab active" onclick="showAppTab('create')">Create Note</button>
                 <button class="tab" onclick="showAppTab('mynotes')">My Notes</button>
-                <button class="tab" id="allnotesTab" class="hidden" onclick="showAppTab('allnotes')">🔓 All Notes</button>
             </div>
 
             <!-- Create Note Tab -->
@@ -363,13 +281,7 @@
                 </div>
                 <div class="form-group">
                     <label>Note Content</label>
-                    <textarea id="noteContent" placeholder="Write your note here... (Try injecting HTML/JS!)"></textarea>
-                </div>
-                <!-- VULNERABILITY: Allow HTML checkbox -->
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="allowHtml"> Allow HTML in note (⚠️ Dangerous!)
-                    </label>
+                    <textarea id="noteContent" placeholder="Write your note here..."></textarea>
                 </div>
                 <button onclick="createNote()">Create & Share Note</button>
                 <div id="createSuccess" class="success"></div>
@@ -386,12 +298,6 @@
                     <p style="color: #666;">No notes yet. Create your first note!</p>
                 </div>
             </div>
-
-            <!-- All Notes Tab (Admin Only) -->
-            <div id="allnotesTab" class="hidden">
-                <div class="warning">Admin View - Can see EVERYONE's notes!</div>
-                <div id="allNotesList"></div>
-            </div>
         </div>
 
         <!-- View Shared Note Screen -->
@@ -401,8 +307,7 @@
             
             <div class="note-item">
                 <div class="note-title" id="viewTitle"></div>
-                <!-- VULNERABILITY: innerHTML used without sanitization -->
-                <div style="margin-top: 15px;" id="viewContent"></div>
+                <div style="margin-top: 15px; white-space: pre-wrap; font-family: 'Courier New', monospace;" id="viewContent"></div>
                 <div style="margin-top: 15px; font-size: 12px; color: #999;">
                     By <strong id="viewAuthor"></strong> • <span id="viewDate"></span>
                 </div>
@@ -413,11 +318,55 @@
     </div>
 
     <script>
-        // VULNERABILITY 1: Plaintext password storage
-        // VULNERABILITY 2: All data visible in localStorage
-        // VULNERABILITY 3: No encryption
-        // VULNERABILITY 4: Client-side only validation
-        
+        // VULNERABILITY 1: Exposed admin backdoor in console
+        window.DEBUG_MODE = true;
+        window.adminAccess = function(password) {
+            // VULNERABILITY: Hardcoded admin password
+            if (password === 'admin123') {
+                storage.currentUser = 'admin@noteshare.com';
+                if (!storage.users['admin@noteshare.com']) {
+                    storage.users['admin@noteshare.com'] = {
+                        username: 'Administrator',
+                        password: 'admin123',
+                        email: 'admin@noteshare.com',
+                        created: Date.now(),
+                        isAdmin: true
+                    };
+                    storage.saveUsers();
+                }
+                showApp();
+                console.log('Admin access granted!');
+                return true;
+            }
+            return false;
+        };
+
+        // VULNERABILITY 2: Exposed data manipulation functions
+        window.getAllUsers = function() {
+            return storage.users;
+        };
+
+        window.getAllNotes = function() {
+            return storage.notes;
+        };
+
+        window.deleteUser = function(email) {
+            delete storage.users[email];
+            storage.saveUsers();
+            console.log('User deleted:', email);
+        };
+
+        window.modifyNote = function(noteId, newContent) {
+            if (storage.notes[noteId]) {
+                storage.notes[noteId].content = newContent;
+                storage.saveNotes();
+                console.log('Note modified:', noteId);
+                return true;
+            }
+            return false;
+        };
+
+        // Simple localStorage-based storage
         const storage = {
             users: JSON.parse(localStorage.getItem('noteshare_users') || '{}'),
             notes: JSON.parse(localStorage.getItem('noteshare_notes') || '{}'),
@@ -442,12 +391,20 @@
             }
         };
 
-        // VULNERABILITY 5: Exposed admin check
-        window.isAdmin = false;
-
+        // VULNERABILITY 3: URL parameter injection allows arbitrary code execution
         function checkSharedNote() {
             const params = new URLSearchParams(window.location.search);
             const noteId = params.get('note');
+            
+            // VULNERABILITY: eval() on URL parameter
+            const debug = params.get('debug');
+            if (debug) {
+                try {
+                    eval(debug); // CRITICAL: Arbitrary code execution!
+                } catch(e) {
+                    console.error('Debug error:', e);
+                }
+            }
             
             if (noteId) {
                 const note = storage.notes[noteId];
@@ -459,21 +416,16 @@
             return false;
         }
 
+        // VULNERABILITY 4: XSS in note viewing - no sanitization
         function showSharedNote(note) {
             document.getElementById('authScreen').classList.add('hidden');
             document.getElementById('appScreen').classList.add('hidden');
             document.getElementById('viewScreen').classList.remove('hidden');
 
-            document.getElementById('viewTitle').textContent = note.title;
-            
-            // VULNERABILITY 6: XSS via innerHTML without sanitization
-            if (note.allowHtml) {
-                document.getElementById('viewContent').innerHTML = note.content;
-            } else {
-                document.getElementById('viewContent').textContent = note.content;
-            }
-            
-            document.getElementById('viewAuthor').textContent = note.author;
+            // VULNERABILITY: Direct innerHTML injection - XSS!
+            document.getElementById('viewTitle').innerHTML = note.title;
+            document.getElementById('viewContent').innerHTML = note.content;
+            document.getElementById('viewAuthor').innerHTML = note.author;
             document.getElementById('viewDate').textContent = new Date(note.created).toLocaleString();
         }
 
@@ -495,72 +447,34 @@
 
         function showTab(tab) {
             document.querySelectorAll('#authScreen .tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
             
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('signupForm').classList.add('hidden');
-            document.getElementById('hackForm').classList.add('hidden');
-            
-            document.getElementById(tab + 'Form').classList.remove('hidden');
+            if (tab === 'login') {
+                event.target.classList.add('active');
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('signupForm').classList.add('hidden');
+            } else {
+                event.target.classList.add('active');
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('signupForm').classList.remove('hidden');
+            }
         }
 
         function showAppTab(tab) {
             document.querySelectorAll('#appScreen .tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
             
-            document.getElementById('createTab').classList.add('hidden');
-            document.getElementById('mynotesTab').classList.add('hidden');
-            document.getElementById('allnotesTab').classList.add('hidden');
-            
-            document.getElementById(tab + 'Tab').classList.remove('hidden');
-            
-            if (tab === 'mynotes') {
+            if (tab === 'create') {
+                event.target.classList.add('active');
+                document.getElementById('createTab').classList.remove('hidden');
+                document.getElementById('mynotesTab').classList.add('hidden');
+            } else {
+                event.target.classList.add('active');
+                document.getElementById('createTab').classList.add('hidden');
+                document.getElementById('mynotesTab').classList.remove('hidden');
                 loadMyNotes();
-            } else if (tab === 'allnotes') {
-                loadAllNotes();
             }
         }
 
-        // VULNERABILITY 7: SQL Injection-style bypass
-        function login() {
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            const errorDiv = document.getElementById('loginError');
-
-            errorDiv.textContent = '';
-
-            // VULNERABILITY 8: Magic bypass strings
-            if (email === "' OR '1'='1" || password === "' OR '1'='1") {
-                alert('🔓 SQL Injection bypass detected! Granting access...');
-                // Just log in as first user
-                const firstUser = Object.keys(storage.users)[0];
-                if (firstUser) {
-                    storage.saveCurrentUser(firstUser);
-                    showApp();
-                    return;
-                }
-            }
-
-            if (!email || !password) {
-                errorDiv.textContent = 'Please fill in all fields';
-                return;
-            }
-
-            const user = storage.users[email.toLowerCase()];
-
-            // VULNERABILITY 9: Weak password check (case sensitive bypass)
-            if (!user || user.password !== password) {
-                errorDiv.textContent = 'Invalid email or password';
-                return;
-            }
-
-            storage.saveCurrentUser(email.toLowerCase());
-            document.getElementById('loginEmail').value = '';
-            document.getElementById('loginPassword').value = '';
-
-            showApp();
-        }
-
+        // VULNERABILITY 5: No password strength requirements
         function signup() {
             const username = document.getElementById('signupUsername').value.trim();
             const email = document.getElementById('signupEmail').value.trim().toLowerCase();
@@ -569,17 +483,16 @@
 
             errorDiv.textContent = '';
 
-            // VULNERABILITY 10: No input validation
+            // VULNERABILITY: No input validation on username (allows XSS)
             if (!username || !email || !password) {
                 errorDiv.textContent = 'Please fill in all fields';
                 return;
             }
 
-            // VULNERABILITY 11: Admin backdoor via username
-            let isAdmin = false;
-            if (username.toLowerCase().includes('admin') || username.toLowerCase().includes('root')) {
-                isAdmin = true;
-                alert('🔓 Admin account detected! Granting admin privileges...');
+            // VULNERABILITY: Weak password check - accepts any length
+            if (password.length < 1) {
+                errorDiv.textContent = 'Password required';
+                return;
             }
 
             if (storage.users[email]) {
@@ -587,12 +500,12 @@
                 return;
             }
 
+            // VULNERABILITY 6: Password stored in plaintext
             storage.users[email] = {
                 username: username,
-                password: password, // VULNERABILITY 12: Plaintext passwords
+                password: password, // PLAINTEXT PASSWORD!
                 email: email,
-                created: Date.now(),
-                isAdmin: isAdmin
+                created: Date.now()
             };
 
             storage.saveUsers();
@@ -605,25 +518,54 @@
             showApp();
         }
 
+        // VULNERABILITY 7: SQL-injection-like attack via email field (conceptual)
+        function login() {
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+
+            errorDiv.textContent = '';
+
+            if (!email || !password) {
+                errorDiv.textContent = 'Please fill in all fields';
+                return;
+            }
+
+            // VULNERABILITY: Login bypass with special email
+            if (email.includes('--') || email === "admin' OR '1'='1") {
+                storage.saveCurrentUser('admin@noteshare.com');
+                showApp();
+                return;
+            }
+
+            const user = storage.users[email];
+
+            if (!user || user.password !== password) {
+                errorDiv.textContent = 'Invalid email or password';
+                return;
+            }
+
+            storage.saveCurrentUser(email);
+
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+
+            showApp();
+        }
+
         function showApp() {
             document.getElementById('authScreen').classList.add('hidden');
             document.getElementById('appScreen').classList.remove('hidden');
             
             const user = storage.users[storage.currentUser];
-            document.getElementById('currentUser').textContent = user.username;
-
-            // Check admin status
-            if (user.isAdmin || window.isAdmin) {
-                document.getElementById('adminBadge').classList.remove('hidden');
-                document.getElementById('allnotesTab').classList.remove('hidden');
-            }
+            // VULNERABILITY 8: XSS in username display
+            document.getElementById('currentUser').innerHTML = user ? user.username : 'Unknown';
 
             loadMyNotes();
         }
 
         function logout() {
             storage.clearCurrentUser();
-            window.isAdmin = false;
             document.getElementById('appScreen').classList.add('hidden');
             document.getElementById('authScreen').classList.remove('hidden');
             
@@ -632,10 +574,10 @@
             document.getElementById('shareSection').classList.add('hidden');
         }
 
+        // VULNERABILITY 9: No CSRF protection, no rate limiting
         function createNote() {
             const title = document.getElementById('noteTitle').value.trim();
             const content = document.getElementById('noteContent').value.trim();
-            const allowHtml = document.getElementById('allowHtml').checked;
             const successDiv = document.getElementById('createSuccess');
 
             successDiv.textContent = '';
@@ -646,14 +588,14 @@
             }
 
             const user = storage.users[storage.currentUser];
-            const noteId = 'note-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            // VULNERABILITY 10: Predictable note IDs
+            const noteId = 'note-' + Date.now();
 
             const note = {
                 id: noteId,
-                title: title,
-                content: content,
-                allowHtml: allowHtml, // VULNERABILITY 13: Store XSS preference
-                author: user.username,
+                title: title, // VULNERABILITY: No XSS sanitization
+                content: content, // VULNERABILITY: No XSS sanitization
+                author: user ? user.username : 'Anonymous',
                 authorEmail: storage.currentUser,
                 created: Date.now()
             };
@@ -665,11 +607,11 @@
             document.getElementById('shareLink').textContent = shareUrl;
             document.getElementById('shareSection').classList.remove('hidden');
 
-            successDiv.textContent = '✅ Note created successfully!';
+            // VULNERABILITY 11: Success message can contain user input (XSS)
+            successDiv.innerHTML = '✅ Note "' + title + '" created successfully!';
 
             document.getElementById('noteTitle').value = '';
             document.getElementById('noteContent').value = '';
-            document.getElementById('allowHtml').checked = false;
 
             loadMyNotes();
         }
@@ -683,7 +625,15 @@
 
         function loadMyNotes() {
             const notesList = document.getElementById('notesList');
-            const myNotes = Object.values(storage.notes).filter(n => n.authorEmail === storage.currentUser);
+            
+            // VULNERABILITY 12: Can view ALL notes, not just own notes with URL manipulation
+            let myNotes = Object.values(storage.notes);
+            
+            // VULNERABILITY 13: Insecure direct object reference
+            const viewAll = new URLSearchParams(window.location.search).get('viewall');
+            if (!viewAll) {
+                myNotes = myNotes.filter(n => n.authorEmail === storage.currentUser);
+            }
 
             if (myNotes.length === 0) {
                 notesList.innerHTML = '<p style="color: #666;">No notes yet. Create your first note!</p>';
@@ -693,17 +643,16 @@
             let html = '';
             myNotes.sort((a, b) => b.created - a.created).forEach(note => {
                 const shareUrl = window.location.origin + window.location.pathname + '?note=' + note.id;
-                // VULNERABILITY 14: XSS in note preview
+                // VULNERABILITY 14: XSS in note listing - innerHTML with unsanitized data
                 html += `
                     <div class="note-item">
                         <div class="note-title">${note.title}</div>
                         <div class="note-preview">${note.content.substring(0, 100)}...</div>
                         <div style="margin-top: 10px; font-size: 12px; color: #999;">
                             Created ${new Date(note.created).toLocaleDateString()}
-                            ${note.allowHtml ? '<span style="color: #f44336;"> • ⚠️ HTML Enabled</span>' : ''}
                         </div>
                         <div class="note-actions">
-                            <button onclick="viewNotePopup('${note.id}')">👁️ View</button>
+                            <button onclick="viewNote('${note.id}')">👁️ View</button>
                             <button onclick="copyNoteLink('${note.id}')" class="copy-btn" style="margin-top: 0;">📋 Copy Link</button>
                             <button onclick="deleteNote('${note.id}')" style="background: #f44336;">🗑️ Delete</button>
                         </div>
@@ -714,173 +663,41 @@
             notesList.innerHTML = html;
         }
 
-        function loadAllNotes() {
-            const allNotesList = document.getElementById('allNotesList');
-            const allNotes = Object.values(storage.notes);
-
-            if (allNotes.length === 0) {
-                allNotesList.innerHTML = '<p style="color: #666;">No notes in system.</p>';
-                return;
-            }
-
-            let html = '<h3>All Users\' Notes (Admin View)</h3>';
-            allNotes.sort((a, b) => b.created - a.created).forEach(note => {
-                html += `
-                    <div class="note-item">
-                        <div class="note-title">${note.title}</div>
-                        <div class="note-preview">${note.content.substring(0, 100)}...</div>
-                        <div style="margin-top: 10px; font-size: 12px; color: #999;">
-                            By ${note.author} (${note.authorEmail}) • ${new Date(note.created).toLocaleDateString()}
-                        </div>
-                        <div class="note-actions">
-                            <button onclick="viewNotePopup('${note.id}')">👁️ View</button>
-                            <button onclick="deleteNote('${note.id}')" style="background: #f44336;">🗑️ Delete</button>
-                        </div>
-                    </div>
-                `;
-            });
-
-            allNotesList.innerHTML = html;
-        }
-
-        function viewNotePopup(noteId) {
+        function viewNote(noteId) {
             const note = storage.notes[noteId];
             if (!note) return;
 
-            alert(`Title: ${note.title}\n\n${note.content}\n\nBy: ${note.author}\nCreated: ${new Date(note.created).toLocaleString()}`);
+            // VULNERABILITY 15: Alert with unsanitized content (minor XSS vector)
+            alert(`Title: ${note.title}\n\n${note.content}\n\nCreated: ${new Date(note.created).toLocaleString()}`);
         }
 
         function copyNoteLink(noteId) {
             const shareUrl = window.location.origin + window.location.pathname + '?note=' + noteId;
             navigator.clipboard.writeText(shareUrl).then(() => {
-                alert('✅ Share link copied!');
+                alert('✅ Share link copied to clipboard!');
             });
         }
 
+        // VULNERABILITY 16: No ownership check - can delete anyone's notes
         function deleteNote(noteId) {
-            if (!confirm('Delete this note?')) return;
+            if (!confirm('Are you sure you want to delete this note?')) return;
 
             delete storage.notes[noteId];
             storage.saveNotes();
             loadMyNotes();
-            if (window.isAdmin) loadAllNotes();
         }
 
-        // HACK FUNCTIONS
+        // VULNERABILITY 17: Console logging exposes all data
+        console.log('NoteShare Debug Mode Active');
+        console.log('Available commands:');
+        console.log('- adminAccess(password) - Get admin access');
+        console.log('- getAllUsers() - View all users');
+        console.log('- getAllNotes() - View all notes');
+        console.log('- deleteUser(email) - Delete any user');
+        console.log('- modifyNote(noteId, content) - Modify any note');
+        console.log('Hint: Try adminAccess("admin123")');
 
-        function hackBypassLogin() {
-            alert('💀 BYPASSING LOGIN...\n\nTip: Look in localStorage or try magic strings in login form!');
-            console.log('🔓 All users:', storage.users);
-            console.log('💡 Try logging in with: email="' + "' OR '1'='1" + '" password="anything"');
-        }
-
-        function hackGrantAdmin() {
-            window.isAdmin = true;
-            alert('👑 ADMIN ACCESS GRANTED!\n\nRefresh or re-login to see admin features.');
-            console.log('✅ window.isAdmin = true');
-            
-            // Auto-grant to current user if logged in
-            if (storage.currentUser && storage.users[storage.currentUser]) {
-                storage.users[storage.currentUser].isAdmin = true;
-                storage.saveUsers();
-                showApp();
-            }
-        }
-
-        function hackViewAllNotes() {
-            console.log('👁️ ALL NOTES:', storage.notes);
-            alert('👁️ All notes dumped to console!\n\nCheck the console (F12) to see everyone\'s private notes.');
-        }
-
-        function hackDeleteAllData() {
-            if (!confirm('💀 DELETE EVERYTHING?\n\nThis will wipe all users and notes!')) return;
-            
-            localStorage.clear();
-            storage.users = {};
-            storage.notes = {};
-            storage.currentUser = null;
-            
-            alert('🗑️ All data deleted! Refresh page.');
-            location.reload();
-        }
-
-        function hackStealPasswords() {
-            console.log('🔑 ALL PASSWORDS (plaintext):');
-            Object.entries(storage.users).forEach(([email, user]) => {
-                console.log(`${email}: ${user.password}`);
-            });
-            alert('🔑 All passwords dumped to console!\n\nCheck console (F12) to see plaintext passwords.');
-        }
-
-        function hackInjectXSS() {
-            const xssPayload = '<img src=x onerror="alert(\'XSS Attack! Cookie: \' + document.cookie)">';
-            alert('💉 XSS Test:\n\n1. Create a note\n2. Check "Allow HTML"\n3. Paste this:\n\n' + xssPayload + '\n\n4. Share & open link');
-            navigator.clipboard.writeText(xssPayload);
-            alert('✅ XSS payload copied to clipboard!');
-        }
-
-        function showHackTips() {
-            const tips = `
-🔓 EXPLOIT GUIDE:
-
-1. SQL INJECTION BYPASS:
-   Login with: ' OR '1'='1
-   
-2. ADMIN BACKDOOR:
-   Signup with username: "admin123"
-   
-3. XSS INJECTION:
-   Create note with HTML enabled
-   Inject: <script>alert('hacked')</script>
-   
-4. VIEW ALL DATA:
-   Open console (F12)
-   Type: storage.users
-   Type: storage.notes
-   
-5. GRANT ADMIN:
-   Console: window.isAdmin = true
-   Console: storage.users[storage.currentUser].isAdmin = true
-   
-6. STEAL PASSWORDS:
-   Console: Object.values(storage.users).map(u => u.password)
-   
-7. DELETE OTHERS' NOTES:
-   Get note ID from URL
-   Console: delete storage.notes['note-id']
-   
-8. IMPERSONATE USER:
-   Console: storage.saveCurrentUser('victim@email.com')
-   
-9. MODIFY NOTE CONTENT:
-   Console: storage.notes['note-id'].content = 'hacked!'
-   Console: storage.saveNotes()
-
-10. PERSISTENT XSS:
-    Create note with: <img src=x onerror="localStorage.setItem('hacked','true')">
-    Every page load triggers it!
-
-MORE:
-- All data in localStorage (unencrypted)
-- No CSRF protection
-- No rate limiting
-- No input sanitization
-- innerHTML everywhere
-- Client-side validation only
-            `;
-            alert(tips);
-            console.log(tips);
-        }
-
-        // Initialize
         init();
-
-        // Expose storage globally for easy hacking
-        window.storage = storage;
-        
-        console.log('🔓 HACKABLE VERSION LOADED!');
-        console.log('💡 Tip: Type "storage" in console to see all data');
-        console.log('💡 Tip: Type "showHackTips()" for exploit guide');
     </script>
 </body>
 </html>
