@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoteShare - Simple Note Sharing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 200px;
+            font-family: 'Courier New', monospace;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .link-button {
+            background: #f5f5f5;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        .link-button:hover {
+            background: #e0e0e0;
+        }
+
+        .error {
+            color: #f44336;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .success {
+            color: #4CAF50;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .note-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .note-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .note-preview {
+            color: #666;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .note-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .note-actions button {
+            width: auto;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .share-link {
+            background: #e3f2fd;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 14px;
+            border: 2px solid #2196F3;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .logout-btn {
+            width: auto;
+            padding: 8px 16px;
+            font-size: 14px;
+            background: #f44336;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .copy-btn {
+            background: #4CAF50;
+            width: auto;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login/Signup Screen -->
+        <div id="authScreen">
+            <h1>📝 NoteShare</h1>
+            <p class="subtitle">Create and share notes instantly</p>
+
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('login')">Login</button>
+                <button class="tab" onclick="showTab('signup')">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter password">
+                </div>
+                <button onclick="login()">Login</button>
+                <div id="loginError" class="error"></div>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" class="hidden">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="signupUsername" placeholder="Choose a username">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signupEmail" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signupPassword" placeholder="Choose a password">
+                </div>
+                <button onclick="signup()">Create Account</button>
+                <div id="signupError" class="error"></div>
+            </div>
+        </div>
+
+        <!-- Main App Screen -->
+        <div id="appScreen" class="hidden">
+            <div class="header">
+                <div>
+                    <h1>📝 My Notes</h1>
+                    <div class="user-info">Logged in as <strong id="currentUser"></strong></div>
+                </div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="showAppTab('create')">Create Note</button>
+                <button class="tab" onclick="showAppTab('mynotes')">My Notes</button>
+            </div>
+
+            <!-- Create Note Tab -->
+            <div id="createTab">
+                <div class="form-group">
+                    <label>Note Title</label>
+                    <input type="text" id="noteTitle" placeholder="Enter note title">
+                </div>
+                <div class="form-group">
+                    <label>Note Content</label>
+                    <textarea id="noteContent" placeholder="Write your note here..."></textarea>
+                </div>
+                <button onclick="createNote()">Create & Share Note</button>
+                <div id="createSuccess" class="success"></div>
+                <div id="shareSection" class="hidden">
+                    <h3 style="margin-top: 20px; margin-bottom: 10px;">Share this link:</h3>
+                    <div class="share-link" id="shareLink"></div>
+                    <button class="copy-btn" onclick="copyShareLink()">📋 Copy Link</button>
+                </div>
+            </div>
+
+            <!-- My Notes Tab -->
+            <div id="mynotesTab" class="hidden">
+                <div id="notesList">
+                    <p style="color: #666;">No notes yet. Create your first note!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Shared Note Screen -->
+        <div id="viewScreen" class="hidden">
+            <h1>📝 Shared Note</h1>
+            <p class="subtitle">Someone shared this note with you</p>
+            
+            <div class="note-item">
+                <div class="note-title" id="viewTitle"></div>
+                <div style="margin-top: 15px; white-space: pre-wrap; font-family: 'Courier New', monospace;" id="viewContent"></div>
+                <div style="margin-top: 15px; font-size: 12px; color: #999;">
+                    By <strong id="viewAuthor"></strong> • <span id="viewDate"></span>
+                </div>
+            </div>
+
+            <button onclick="goHome()">← Back to Home</button>
+        </div>
+    </div>
+
+    <script>
+        // Simple localStorage-based storage (no backend needed!)
+        const storage = {
+            users: JSON.parse(localStorage.getItem('noteshare_users') || '{}'),
+            notes: JSON.parse(localStorage.getItem('noteshare_notes') || '{}'),
+            currentUser: localStorage.getItem('noteshare_current_user'),
+
+            saveUsers() {
+                localStorage.setItem('noteshare_users', JSON.stringify(this.users));
+            },
+
+            saveNotes() {
+                localStorage.setItem('noteshare_notes', JSON.stringify(this.notes));
+            },
+
+            saveCurrentUser(email) {
+                localStorage.setItem('noteshare_current_user', email);
+                this.currentUser = email;
+            },
+
+            clearCurrentUser() {
+                localStorage.removeItem('noteshare_current_user');
+                this.currentUser = null;
+            }
+        };
+
+        // Check if viewing a shared note
+        function checkSharedNote() {
+            const params = new URLSearchParams(window.location.search);
+            const noteId = params.get('note');
+            
+            if (noteId) {
+                const note = storage.notes[noteId];
+                if (note) {
+                    showSharedNote(note);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Show shared note
+        function showSharedNote(note) {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('appScreen').classList.add('hidden');
+            document.getElementById('viewScreen').classList.remove('hidden');
+
+            document.getElementById('viewTitle').textContent = note.title;
+            document.getElementById('viewContent').textContent = note.content;
+            document.getElementById('viewAuthor').textContent = note.author;
+            document.getElementById('viewDate').textContent = new Date(note.created).toLocaleString();
+        }
+
+        // Go back to home
+        function goHome() {
+            window.location.href = window.location.pathname;
+        }
+
+        // Initialize app
+        function init() {
+            // Check for shared note first
+            if (checkSharedNote()) {
+                return;
+            }
+
+            // Check if user is logged in
+            if (storage.currentUser && storage.users[storage.currentUser]) {
+                showApp();
+            } else {
+                document.getElementById('authScreen').classList.remove('hidden');
+            }
+        }
+
+        // Show/hide tabs
+        function showTab(tab) {
+            document.querySelectorAll('#authScreen .tab').forEach(t => t.classList.remove('active'));
+            
+            if (tab === 'login') {
+                event.target.classList.add('active');
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('signupForm').classList.add('hidden');
+            } else {
+                event.target.classList.add('active');
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('signupForm').classList.remove('hidden');
+            }
+        }
+
+        function showAppTab(tab) {
+            document.querySelectorAll('#appScreen .tab').forEach(t => t.classList.remove('active'));
+            
+            if (tab === 'create') {
+                event.target.classList.add('active');
+                document.getElementById('createTab').classList.remove('hidden');
+                document.getElementById('mynotesTab').classList.add('hidden');
+            } else {
+                event.target.classList.add('active');
+                document.getElementById('createTab').classList.add('hidden');
+                document.getElementById('mynotesTab').classList.remove('hidden');
+                loadMyNotes();
+            }
+        }
+
+        // Signup
+        function signup() {
+            const username = document.getElementById('signupUsername').value.trim();
+            const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+            const password = document.getElementById('signupPassword').value;
+            const errorDiv = document.getElementById('signupError');
+
+            errorDiv.textContent = '';
+
+            if (!username || !email || !password) {
+                errorDiv.textContent = 'Please fill in all fields';
+                return;
+            }
+
+            if (password.length < 6) {
+                errorDiv.textContent = 'Password must be at least 6 characters';
+                return;
+            }
+
+            if (storage.users[email]) {
+                errorDiv.textContent = 'Email already registered';
+                return;
+            }
+
+            // Create user
+            storage.users[email] = {
+                username: username,
+                password: password, // In production, this should be hashed!
+                email: email,
+                created: Date.now()
+            };
+
+            storage.saveUsers();
+            storage.saveCurrentUser(email);
+
+            // Clear form
+            document.getElementById('signupUsername').value = '';
+            document.getElementById('signupEmail').value = '';
+            document.getElementById('signupPassword').value = '';
+
+            showApp();
+        }
+
+        // Login
+        function login() {
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+
+            errorDiv.textContent = '';
+
+            if (!email || !password) {
+                errorDiv.textContent = 'Please fill in all fields';
+                return;
+            }
+
+            const user = storage.users[email];
+
+            if (!user || user.password !== password) {
+                errorDiv.textContent = 'Invalid email or password';
+                return;
+            }
+
+            storage.saveCurrentUser(email);
+
+            // Clear form
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+
+            showApp();
+        }
+
+        // Show app
+        function showApp() {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('appScreen').classList.remove('hidden');
+            
+            const user = storage.users[storage.currentUser];
+            document.getElementById('currentUser').textContent = user.username;
+
+            loadMyNotes();
+        }
+
+        // Logout
+        function logout() {
+            storage.clearCurrentUser();
+            document.getElementById('appScreen').classList.add('hidden');
+            document.getElementById('authScreen').classList.remove('hidden');
+            
+            // Clear forms
+            document.getElementById('noteTitle').value = '';
+            document.getElementById('noteContent').value = '';
+            document.getElementById('shareSection').classList.add('hidden');
+        }
+
+        // Create note
+        function createNote() {
+            const title = document.getElementById('noteTitle').value.trim();
+            const content = document.getElementById('noteContent').value.trim();
+            const successDiv = document.getElementById('createSuccess');
+
+            successDiv.textContent = '';
+
+            if (!title || !content) {
+                alert('Please fill in both title and content');
+                return;
+            }
+
+            const user = storage.users[storage.currentUser];
+            const noteId = 'note-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+
+            const note = {
+                id: noteId,
+                title: title,
+                content: content,
+                author: user.username,
+                authorEmail: storage.currentUser,
+                created: Date.now()
+            };
+
+            storage.notes[noteId] = note;
+            storage.saveNotes();
+
+            // Show share link
+            const shareUrl = window.location.origin + window.location.pathname + '?note=' + noteId;
+            document.getElementById('shareLink').textContent = shareUrl;
+            document.getElementById('shareSection').classList.remove('hidden');
+
+            successDiv.textContent = '✅ Note created successfully!';
+
+            // Clear form
+            document.getElementById('noteTitle').value = '';
+            document.getElementById('noteContent').value = '';
+
+            // Reload notes list if on that tab
+            loadMyNotes();
+        }
+
+        // Copy share link
+        function copyShareLink() {
+            const link = document.getElementById('shareLink').textContent;
+            navigator.clipboard.writeText(link).then(() => {
+                alert('✅ Link copied to clipboard!');
+            });
+        }
+
+        // Load my notes
+        function loadMyNotes() {
+            const notesList = document.getElementById('notesList');
+            const myNotes = Object.values(storage.notes).filter(n => n.authorEmail === storage.currentUser);
+
+            if (myNotes.length === 0) {
+                notesList.innerHTML = '<p style="color: #666;">No notes yet. Create your first note!</p>';
+                return;
+            }
+
+            let html = '';
+            myNotes.sort((a, b) => b.created - a.created).forEach(note => {
+                const shareUrl = window.location.origin + window.location.pathname + '?note=' + note.id;
+                html += `
+                    <div class="note-item">
+                        <div class="note-title">${note.title}</div>
+                        <div class="note-preview">${note.content.substring(0, 100)}...</div>
+                        <div style="margin-top: 10px; font-size: 12px; color: #999;">
+                            Created ${new Date(note.created).toLocaleDateString()}
+                        </div>
+                        <div class="note-actions">
+                            <button onclick="viewNote('${note.id}')">👁️ View</button>
+                            <button onclick="copyNoteLink('${note.id}')" class="copy-btn" style="margin-top: 0;">📋 Copy Link</button>
+                            <button onclick="deleteNote('${note.id}')" style="background: #f44336;">🗑️ Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            notesList.innerHTML = html;
+        }
+
+        // View note
+        function viewNote(noteId) {
+            const note = storage.notes[noteId];
+            if (!note) return;
+
+            alert(`Title: ${note.title}\n\n${note.content}\n\nCreated: ${new Date(note.created).toLocaleString()}`);
+        }
+
+        // Copy note link
+        function copyNoteLink(noteId) {
+            const shareUrl = window.location.origin + window.location.pathname + '?note=' + noteId;
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert('✅ Share link copied to clipboard!');
+            });
+        }
+
+        // Delete note
+        function deleteNote(noteId) {
+            if (!confirm('Are you sure you want to delete this note?')) return;
+
+            delete storage.notes[noteId];
+            storage.saveNotes();
+            loadMyNotes();
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
